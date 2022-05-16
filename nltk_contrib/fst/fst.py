@@ -10,7 +10,6 @@
 
 """
 Finite state transducers.
-
 A finite state trasducer, or FST, is a directed graph that is used to
 encode a mapping from a set of I{input strings} to a set of I{output
 strings}.  An X{input string} is a sequence of immutable values (such
@@ -22,7 +21,6 @@ Note that this notion of I{string} is different from the python string
 type -- symbol strings are always encoded as tuples of input or output
 symbols, even if those symbols are characters.  Also, note that empty
 sequences are valid symbol strings.
-
 The nodes of an FST are called X{states}, and the edges are called
 X{transition arcs} or simply X{arcs}.  States may be marked as
 X{final}, and each final state is annotated with an output string,
@@ -30,22 +28,18 @@ called the X{finalizing string}.  Each arc is annotated with an input
 string and an output string.  An arc with an empty input string is
 called an I{epsilon-input arc}; and an arc with an empty output
 string is called an I{epsilon-output arc}.
-
 The set of mappings encoded by the FST are defined by the set of paths
 through the graph, starting at a special state known as the X{initial
 state}, and ending at a final state.  In particular, the FST maps an
 input string X to an output string Y iff there exists a path from the
 initial state to a final state such that:
-
   - The input string X is formed by concatenating the input strings
     of the arcs along the path (in order).
   - The output string Y is formed by concatenating the output strings
     of the arcs along the path (in order), plus the final state's
     output string.
-
 The following list defines some terms that apply to finite state
 transducers.
-
   - The X{transduction} defined by a FST is the mapping from input
     strings to output strings.
     
@@ -53,27 +47,21 @@ transducers.
     string maps to at most one output string.  An FST X{encodes a
     nondeterministic transduction} if any input string maps to more
     than one output string.
-
   - An FST is X{deterministic} if it every state contains at most one
     outgoing arc that is consistent with any input string; otherwise,
     the FST is X{nondeterministic}.  If an FST is deterministic, then
     it necessarily encodes a deterministic transduction; however, it
     is possible to define an FST that is nondeterministic but that
     encodes a deterministic transduction.
-
   - An FST is X{sequential} if each arc is labeled with exactly one
     input symbol, no two outgoing arcs from any state have the same
     input symbol, and all finalizing strings are empty.  (Sequential
     implies deterministic).
-
   - An FST is I{subsequential} if each arc is labeled with exactly
     one input symbol, and no two outgoing arcs from any state have
     the same input symbol.  (Finalizing strings may be non-empty.)
-
 An FSA can be represented as an FST that generates no output symbols.
-
 The current FST class does not provide support for:
-
   - Weighted arcs.  (However, weights can be used as, or included
     in, the output symbols.  The total weight of a path can then
     be found after transduction by combining the weights.  But
@@ -84,9 +72,7 @@ The current FST class does not provide support for:
   
   - Initializing strings (an output string associated with the initial
     state, which is always generated when the FST begins).
-
 Possible future changes:
-
   - Define several classes, in a class hierarchy?  E.g., FSA is a base
     class, FST inherits from it.  And maybe a further subclass to add
     finalizing sequences.  I would need to be more careful to only
@@ -128,13 +114,11 @@ class FST(object):
     state's label is used to access and modify the state.  Similarly,
     each arc is uniquely identified by a label, which is used to
     access and modify the arc.
-
     The set of arcs pointing away from a state are that state's
     I{outgoing} arcs.  The set of arcs pointing to a state are that
     state's I{incoming} arcs.  The state at which an arc originates is
     that arc's I{source} state (or C{src}), and the state at which it
     terminates is its I{destination} state (or C{dst}).
-
     It is possible to define an C{FST} object with no initial state.
     This is represented by assigning a value of C{None} to the
     C{initial_state} variable.  C{FST}s with no initial state are
@@ -417,11 +401,9 @@ class FST(object):
           - For each outgoing arc from C{orig_state}, M{s} has an
             outgoing arc with the same input string, output
             string, and destination state.
-
         Note that if C{orig_state} contained self-loop arcs, then the
         corresponding arcs in M{s} will point to C{orig_state} (i.e.,
         they will I{not} be self-loop arcs).
-
         The state description is I{not} copied.
             
         @param label: The label for the new state.  If not specified,
@@ -455,7 +437,6 @@ class FST(object):
                 label=None, descr=None):
         """
         Create a new transition arc, and return its label.
-
         Arguments should be specified using keywords!
         
         @param src: The label of the source state.
@@ -560,7 +541,6 @@ class FST(object):
         Return a new FST that is identical to this FST, except that
         all state and arc labels have been replaced with new labels.
         These new labels are consecutive integers, starting with zero.
-
         @param relabel_states: If false, then don't relabel the states.
         @param relabel_arcs: If false, then don't relabel the arcs.
         """
@@ -621,9 +601,7 @@ class FST(object):
         """
         Return a new FST which defines the same mapping as this FST,
         but is determinized.
-
         The algorithm used is based on [...].
-
         @require: All arcs in this FST must have exactly one input
             symbol.
         @require: The mapping defined by this FST must be
@@ -1453,12 +1431,10 @@ if __name__ == '__main__':
         -> start
         start -> vp [john:john]
         start -> vp [mary:mary]
-
         # Delay production of the determiner until we know the gender.
         start -> subj_noun [the:]
         subj_noun -> vp [dog:le chien]
         subj_noun -> vp [cow:la vache]
-
         vp -> obj [eats:mange]
         obj -> obj_noun [the:]
         obj -> obj_noun [:]
@@ -1467,11 +1443,11 @@ if __name__ == '__main__':
         end ->
         """)
 
-    print "john eats the bread ->"
-    print '  '+ ' '.join(fst.transduce("john eats the bread".split()))
+    print("john eats the bread ->")
+    print('  '+ ' '.join(fst.transduce("john eats the bread".split())))
     rev = fst.inverted()
-    print "la vache mange de l'herbe ->"
-    print '  '+' '.join(rev.transduce("la vache mange de l'herbe".split()))
+    print("la vache mange de l'herbe ->")
+    print('  '+' '.join(rev.transduce("la vache mange de l'herbe".split())))
 
     demo = FSTDemo(fst)
     demo.transduce("the cow eats the bread".split())
